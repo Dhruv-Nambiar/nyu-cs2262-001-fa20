@@ -1,0 +1,106 @@
+# US
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: us
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: us
+  template:
+    metadata:
+      labels:
+        app: us
+    spec:
+      containers:
+        - name: us
+          image: dn2351docker/us:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: us-expose
+spec:
+  selector:
+    app: us
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30003
+---
+#FS
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fs
+  template:
+    metadata:
+      labels:
+        app: fs
+    spec:
+      containers:
+        - name: fs
+          image: dn2351docker/fs:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9090
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fs-expose
+spec:
+  selector:
+    app: fs
+  type: NodePort
+  ports:
+    - port: 9090
+      targetPort: 9090
+      nodePort: 30002
+---
+# AS
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: as
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: as
+  template:
+    metadata:
+      labels:
+        app: as
+    spec:
+      containers:
+        - name: as
+          image: dn2351docker/as:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 53533
+              protocol: UDP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: as-expose
+spec:
+  selector:
+    app: as
+  type: NodePort
+  ports:
+    - port: 53533
+      targetPort: 53533
+      nodePort: 30001
+      protocol: UDP
